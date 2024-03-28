@@ -1,0 +1,5 @@
+flask
+flask_smorest
+pyodbc
+pandas
+flask_jwt_extended
