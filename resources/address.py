@@ -6,12 +6,21 @@ from flask_jwt_extended import jwt_required
 blp_address=Blueprint('employee address',__name__,description="operations on address")
 @blp_address.route('/employee/address')
 class Address(MethodView):
+    """
+        The Address class is a Flask view class that handles HTTP requests related to employee information.
+    """
     def __init__(self):
+        """
+            In the __init__ method, an instance of the EmployeeInformation class from the db module is
+            created and stored in the self.db attribute
+        """
         self.db=db.Address() 
            
     @jwt_required(verify_type=False)
     def get(self):
-        
+        """
+            Handle get requests for address information
+        """
         try:
             id=request.args.get('AddressID')
             if id is None:
@@ -28,6 +37,9 @@ class Address(MethodView):
         
     @jwt_required(verify_type=False)     
     def post(self):
+        """
+            Handle post requests for address information
+        """
         request_data=request.get_json()
         try:
             self.db.addEmployeeAddress(request_data)
@@ -37,7 +49,9 @@ class Address(MethodView):
     
     @jwt_required(verify_type=False)    
     def put(self):
-        
+        """
+            Handle put requests for address information
+        """
         try:
             addID=request.args.get('AddressID')
             request_data=request.get_json()
@@ -53,6 +67,9 @@ class Address(MethodView):
     
     @jwt_required(verify_type=False)   
     def delete(self):
+        """
+            Handle delete requests for address information 
+        """
         try:
             addid=request.args.get('AddressID')
             if addid is None:

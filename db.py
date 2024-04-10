@@ -1,12 +1,23 @@
 import pyodbc
 
 class DataBaseConnectivity:
+    """Class to establish database connectivity and provide cursor for executing queries."""
+
     def __init__(self):
+        """Initialize the database connection and cursor."""
+        
         self.conn=pyodbc.connect('DRIVER={SQL Server};SERVER=LAPTOP-KGD64VN9;DATABASE=employeeinformation;')
         self.cursor=self.conn.cursor()
     
 class EmployeeInformation(DataBaseConnectivity):
+    """
+    Class to manage employee information in the database
+    """
+    
     def getAllEmployeeRecord(self):
+        """
+        Retrieve all employee records from the database
+        """
         result=[]
         query="SELECT * FROM Employee"
         self.cursor.execute(query)
@@ -26,6 +37,8 @@ class EmployeeInformation(DataBaseConnectivity):
         return result
     
     def getParticularEmployeeRecord(self,id):
+        """Retrieve a particular employee record from the database"""
+        
         query=f"SELECT * FROM Employee WHERE EmployeeID={id}"        
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -43,6 +56,7 @@ class EmployeeInformation(DataBaseConnectivity):
             return([employee_dict])
         
     def addEmployeeRecord(self,data):
+        """Add a new employee record to the database."""
         
         query2=f"""
                     INSERT INTO Employee(FirstName,LastName,DateOfBirth,
@@ -66,8 +80,14 @@ class EmployeeInformation(DataBaseConnectivity):
         self.cursor.execute(q)
         self.conn.commit()
         
+        employee_id_fetch=f'select SCOPE_IDENTITY();'
+        employee_id=self.cursor.execute(employee_id_fetch).fetchone()[0]
+        return employee_id
+        
         
     def updateEmployeeRecord(self,empid,data):
+        """Update an existing employee record in the database."""
+        
         query=f"""  
                     UPDATE Employee SET FirstName='{data['FirstName']}',LastName='{data['LastName']}',
                     DateOfBirth='{data['DateOfBirth']}',HireOfDate='{data['HireOfDate']}',
@@ -82,6 +102,28 @@ class EmployeeInformation(DataBaseConnectivity):
             return True
         else:
             return False
+        
+    def employee_patch_method(self,id,data):
+        """Partially update an employee record in the database."""
+
+        query="UPDATE Employee SET "
+        for key in data:
+            # 
+            if isinstance(data[key], str):
+                query += f"{key}='{data[key]}', "
+            else:
+                query += f"{key}={data[key]}, "
+        
+        query=query[:-2]+f" Where EmployeeID={id}"
+        print(query)
+        self.cursor.execute(query)
+        
+        if self.cursor.rowcount!=0:
+            self.conn.commit()
+            return True
+        else:
+            return False
+        
             
     # def deleteEmployeeRecord(self,empid):
     #     query=f"DELETE FROM Employee WHERE EmployeeID={empid}"
@@ -93,19 +135,19 @@ class EmployeeInformation(DataBaseConnectivity):
     #         return False
     
     def deleteEmployeeRecord(self,empid):
+        """Delete an employee record from the database."""
         
+        # query_city=f"delete from city where not exists(select 1 from Address where city.city_id=Address.AddressID)"
+        # self.cursor.execute(query_city)
+        # self.conn.commit()
         
-        query_city=f"delete from city where not exists(select 1 from Address where city.city_id=Address.AddressID)"
-        self.cursor.execute(query_city)
-        self.conn.commit()
+        # query_state=f"delete from State where not exists(select 1 from Address where STATE.state_id=Address.AddressID)"
+        # self.cursor.execute(query_state)
+        # self.conn.commit()
         
-        query_state=f"delete from State where not exists(select 1 from Address where STATE.state_id=Address.AddressID)"
-        self.cursor.execute(query_state)
-        self.conn.commit()
-        
-        query_country=f"delete from Country where not exists(select 1 from Address where Country.country_id=Address.AddressID)"
-        self.cursor.execute(query_country)
-        self.conn.commit()
+        # query_country=f"delete from Country where not exists(select 1 from Address where Country.country_id=Address.AddressID)"
+        # self.cursor.execute(query_country)
+        # self.conn.commit()
         
         query_department=f"delete from department where not exists(select 1 from employee where employee.DepartmentID=Department.DepartmentID)"
         self.cursor.execute(query_department)
@@ -124,7 +166,11 @@ class EmployeeInformation(DataBaseConnectivity):
         
         
 class Address(DataBaseConnectivity):
+    """Class to manage employee addresses in the database."""
+    
     def getAllEmployeeAddress(self):
+        """Retrieve all employee addresses from the database."""
+        
         result=[]
         query="SELECT * FROM Address"
         self.cursor.execute(query)
@@ -141,6 +187,8 @@ class Address(DataBaseConnectivity):
         return result
     
     def getParticularEmployeeAddress(self,addressid):
+        """Retrieve a particular employee address from the database."""
+        
         query=f"SELECT * FROM Address WHERE AddressID={addressid}"        
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -155,6 +203,8 @@ class Address(DataBaseConnectivity):
             return([address_dict])
         
     def addEmployeeAddress(self,data):
+        """Add a new employee address record to the database."""
+        
         query=f"""INSERT INTO Address(Employee_ref_ID,country_id,state_id,city_id,street,zipcode) VALUES(
             {data['Employee_ref_ID']},{data['country_id']},{data['state_id']},{data['city_id']},'{data['street']}',
                 '{data['zipcode']}')"""
@@ -162,6 +212,8 @@ class Address(DataBaseConnectivity):
         self.conn.commit()    
     
     def updateEmployeeAddress(self,addid,data):
+        """Update an existing employee address record in the database."""
+
         query=f"""UPDATE Address SET Employee_ref_ID={data['Employee_ref_ID']},country_id={data['country_id']}
             ,state_id={data['state_id']},city_id={data['city_id']},street='{data['street']}',zipcode='{data['zipcode']}'
             WHERE AddressID={addid}"""
@@ -174,6 +226,8 @@ class Address(DataBaseConnectivity):
         
             
     def deleteEmployeeAddress(self,addid):
+        """Delete an employee address record from the database."""
+        
         query=f"DELETE FROM Address WHERE AddressID={addid}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -183,7 +237,11 @@ class Address(DataBaseConnectivity):
             return False
   
 class Country(DataBaseConnectivity):
+    """Class to manage employee countries in the database."""
+
     def getAllEmployeeCountry(self):
+        """Retrieve all employee countries from the database."""
+        
         result=[]
         query="SELECT * FROM Country"
         self.cursor.execute(query)
@@ -195,6 +253,8 @@ class Country(DataBaseConnectivity):
         return result
     
     def getParticularEmployeeCountry(self,country_id):
+        """Retrieve a particular employee country from the database."""
+        
         query=f"SELECT * FROM Country WHERE country_id={country_id}"        
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -204,11 +264,15 @@ class Country(DataBaseConnectivity):
             return([country_dict])
         
     def addEmployeeCountry(self,data):
+        """Add a new employee country record to the database."""
+        
         query=f"INSERT INTO Country(countryName) VALUES('{data['countryName']}')"
         self.cursor.execute(query)
         self.conn.commit()    
     
     def updateEmployeeCountry(self,country_id,data):
+        """Update an existing employee country record in the database."""
+        
         query=f"UPDATE Country SET countryName='{data['countryName']}' WHERE country_id={country_id}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -219,6 +283,8 @@ class Country(DataBaseConnectivity):
         
             
     def deleteEmployeeCountry(self,country_id):
+        """Delete an employee country record from the database."""
+        
         query=f"DELETE FROM Country WHERE country_id={country_id}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -228,7 +294,11 @@ class Country(DataBaseConnectivity):
             return False
       
 class State(DataBaseConnectivity):
+    """Class to manage employee states in the database."""
+    
     def getAllEmployeeState(self):
+        """Retrieve all employee states from the database."""
+        
         result=[]
         query="SELECT * FROM State"
         self.cursor.execute(query)
@@ -240,6 +310,8 @@ class State(DataBaseConnectivity):
         return result
     
     def getParticularEmployeeState(self,state_id):
+        """Retrieve a particular employee state from the database."""
+        
         query=f"SELECT * FROM State WHERE state_id={state_id}"        
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -249,11 +321,15 @@ class State(DataBaseConnectivity):
             return([state_dict])
         
     def addEmployeeState(self,data):
+        """Add a new employee state record to the database."""
+        
         query=f"INSERT INTO State VALUES('{data['state_name']}')"
         self.cursor.execute(query)
         self.conn.commit()    
     
     def updateEmployeeState(self,state_id,data):
+        """Update an existing employee state record in the database."""
+        
         query=f"UPDATE State SET state_name='{data['state_name']}' WHERE state_id={state_id}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -264,6 +340,8 @@ class State(DataBaseConnectivity):
         
             
     def deleteEmployeeState(self,state_id):
+        """Delete an employee state record from the database."""
+        
         query=f"DELETE FROM State WHERE state_id={state_id}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -274,7 +352,11 @@ class State(DataBaseConnectivity):
       
 
 class City(DataBaseConnectivity):
+    """Class to manage employee cities in the database."""
+    
     def getAllEmployeeCity(self):
+        """Retrieve all employee cities from the database."""
+
         result=[]
         query="SELECT * FROM City"
         self.cursor.execute(query)
@@ -286,6 +368,8 @@ class City(DataBaseConnectivity):
         return result
     
     def getParticularEmployeeCity(self,city_id):
+        """Retrieve a particular employee city from the database."""
+        
         query=f"SELECT * FROM City WHERE city_id={city_id}"        
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -295,11 +379,15 @@ class City(DataBaseConnectivity):
             return([city_dict])
         
     def addEmployeeCity(self,data):
+        """Add a new employee city record to the database."""
+        
         query=f"INSERT INTO City(city_name) VALUES('{data['city_name']}')"
         self.cursor.execute(query)
         self.conn.commit()    
     
     def updateEmployeeCity(self,city_id,data):
+        """Update an existing employee city record in the database."""
+        
         query=f"UPDATE City SET city_name='{data['city_name']}' WHERE city_id={city_id}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -310,6 +398,8 @@ class City(DataBaseConnectivity):
         
             
     def deleteEmployeeCity(self,city_id):
+        """Delete an employee city record from the database."""
+        
         query=f"DELETE FROM City WHERE city_id={city_id}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -321,7 +411,11 @@ class City(DataBaseConnectivity):
     
 
 class Department(DataBaseConnectivity):
+    """Class to manage employee departments in the database."""
+    
     def getAllEmployeeDepartment(self):
+        """Retrieve all employee departments from the database."""
+        
         result=[]
         query="SELECT * FROM Department"
         self.cursor.execute(query)
@@ -334,6 +428,8 @@ class Department(DataBaseConnectivity):
         return result
     
     def getParticularEmployeeDepartment(self,depid):
+        """Retrieve a particular employee department from the database"""
+         
         query=f"SELECT * FROM Department WHERE DepartmentID={depid}"
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -343,11 +439,14 @@ class Department(DataBaseConnectivity):
             return([department_dict])
         
     def addEmployeedepartment(self,data):
+        """Add a new employee department record to the database."""
         query=f"INSERT INTO Department VALUES('{data['DepartmentName']}')"
         self.cursor.execute(query)
         self.conn.commit()
      
     def updateEmployeeDepartment(self,depid,data):
+        """Update an existing employee department record in the database."""
+        
         query=f"UPDATE Department SET DepartmentName='{data['DepartmentName']}' WHERE DepartmentID={depid}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -358,6 +457,8 @@ class Department(DataBaseConnectivity):
         
     
     def deleteEmployeeDepartment(self,depid):
+        """Delete an employee department record from the database."""
+        
         query=f"DELETE FROM Department WHERE DepartmentID={depid}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -366,7 +467,11 @@ class Department(DataBaseConnectivity):
         else:return False
         
 class Qualification(DataBaseConnectivity):
+    """Class to manage employee qualifications in the database."""
+    
     def getAllEmployeeQualification(self):
+        """Retrieve all employee qualifications from the database"""
+        
         result=[]
         query=f"SELECT * FROM Qualification"
         self.cursor.execute(query)
@@ -381,6 +486,8 @@ class Qualification(DataBaseConnectivity):
         return result
     
     def getParticularEmployeeQualification(self,id):
+        """Retrieve a particular employee qualification from the database."""
+        
         query=f"SELECT * FROM Qualification WHERE QualificationID={id}"
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -393,6 +500,8 @@ class Qualification(DataBaseConnectivity):
             return([qualification_dict])
         
     def updateEmployeeQualification(self,id,data):
+        """Update an existing employee qualification record in the database."""
+        
         query=f"""UPDATE Qualification SET Degree='{data['Degree']}',
         GraduationYear={data['GraduationYear']},
         Institute='{data['Institute']}',EmployeeID={data['EmployeeID']}  WHERE QualificationID={id}"""
@@ -405,12 +514,16 @@ class Qualification(DataBaseConnectivity):
         
 
     def  addEmployeeQualification(self,data):
+        """Add a new employee qualification record to the database."""
+        
         query=f"""INSERT INTO Qualification(EmployeeID,Degree,GraduationYear,Institute) 
         VALUES({data['EmployeeID']},'{data['Degree']}',{data['GraduationYear']},'{data['Institute']}')"""
         self.cursor.execute(query)
         self.conn.commit()
     
     def deleteEmployeeQualification(self,id):
+        """Delete an employee qualification record from the database."""
+        
         query=f"DELETE FROM Qualification WHERE QualificationID={id}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -420,7 +533,11 @@ class Qualification(DataBaseConnectivity):
             return False
 
 class Salary(DataBaseConnectivity):
+    """Class to manage employee salaries in the database."""
+    
     def getAllEmployeeSalary(self):
+        """Retrieve all employee salaries from the database."""
+        
         result=[]
         query="SELECT * FROM Salary"
         self.cursor.execute(query)
@@ -434,6 +551,8 @@ class Salary(DataBaseConnectivity):
         return result
     
     def getParticularEmployeeSalary(self,salaryid):
+        """Retrieve a particular employee salary from the database."""
+        
         query=f"SELECT * FROM Salary WHERE SalaryID={salaryid}"        
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -444,11 +563,15 @@ class Salary(DataBaseConnectivity):
             return([salary_dict])
         
     def  addEmployeeSalary(self,data):
+        """Add a new employee salary record to the database."""
+        
         query=f"INSERT INTO Salary(EmployeeID,Salary) VALUES({data['EmployeeID']},{data['Salary']})"
         self.cursor.execute(query)
         self.conn.commit()
         
     def updateEmployeeSalary(self,salaryid,data):
+        """Update an existing employee salary record in the database."""
+
         query=f"UPDATE Salary SET EmployeeID={data['EmployeeID']},\
             Salary={data['Salary']} WHERE SalaryID={salaryid}"
         self.cursor.execute(query)
@@ -460,6 +583,8 @@ class Salary(DataBaseConnectivity):
 
             
     def deleteEmployeeSalary(self,salaryid):
+        """delete an existing employee salary record in the database.  """
+
         query=f"DELETE FROM Salary WHERE SalaryID={salaryid}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -469,7 +594,11 @@ class Salary(DataBaseConnectivity):
             return False
         
 class Project(DataBaseConnectivity):
+    """Class to manage projects in the database."""
+    
     def getAllProject(self):
+        """Retrieve all projects from the database."""
+        
         result=[]
         query="SELECT * FROM Project"
         self.cursor.execute(query)
@@ -487,6 +616,8 @@ class Project(DataBaseConnectivity):
         return result
     
     def getParticularProject(self,projectid):
+        """Retrieve a particular project from the database."""
+        
         query=f"SELECT * FROM Project WHERE ProjectID={projectid}"        
         self.cursor.execute(query)
         for row in self.cursor.fetchall():
@@ -502,12 +633,16 @@ class Project(DataBaseConnectivity):
             return([project_dict])
         
     def  addProject(self,data):
+        """Add a new project record to the database."""
+
         query=f"""INSERT INTO Project(ProjectName,StartDate,EndDate,Budget,Status,DepartmentID,EmployeeID) VALUES('{data['ProjectName']}','{data['StartDate']}',
             '{data['EndDate']}',{data['Budget']},'{data['Status']}',{data['DepartmentID']},{data['EmployeeID']})"""
         self.cursor.execute(query)
         self.conn.commit()
         
     def updateProject(self,projectid,data):
+        """Update an existing project record in the database."""
+        
         query=f"""UPDATE Project SET ProjectName='{data['ProjectName']}',
             StartDate='{data['StartDate']}',EndDate='{data['EndDate']}',EmployeeID={data['EmployeeID']},
                 Budget={data['Budget']},DepartmentID={data['DepartmentID']},
@@ -521,6 +656,8 @@ class Project(DataBaseConnectivity):
         
         
     def deleteProject(self,projectid):
+        """Delete a project record from the database."""
+        
         query=f"DELETE FROM Project WHERE ProjectID={projectid}"
         self.cursor.execute(query)
         if self.cursor.rowcount!=0:
@@ -530,8 +667,11 @@ class Project(DataBaseConnectivity):
             return False
         
 class EmployeeNthSalary(DataBaseConnectivity):
-
+    """Class to retrieve the nth highest salary of employees from the database."""
+    
     def getAllEmployeeRecord(self,rank):
+        """Retrieve the nth highest salary from the database."""
+        
         query=f"""with combinedata as (select Employee.EmployeeID,FirstName,LastName,DateOfBirth,
                 HireOfDate,Email,PhoneNumber,DepartmentID,
                 Position,ManagerID,SalaryID,Salary

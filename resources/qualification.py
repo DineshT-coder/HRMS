@@ -6,11 +6,21 @@ from flask_jwt_extended import jwt_required
 blp_qualification=Blueprint('employee qualification',__name__,description="operations on qualification")
 @blp_qualification.route('/employee/qualification')
 class Qualification(MethodView):
+    """
+        The qualification class is a Flask view class that handles HTTP requests related to employee information.
+    """
     def __init__(self):
+        """
+            In the __init__ method, an instance of the EmployeeInformation class from the db module is
+            created and stored in the self.db attribute
+        """
         self.db=db.Qualification()    
     
     @jwt_required(verify_type=False)
     def get(self):
+        """
+            Handle get requests for qualification information
+        """
         try:
             id=request.args.get('QualificationID')
             if id is None:
@@ -26,6 +36,9 @@ class Qualification(MethodView):
                 
     @jwt_required(verify_type=False)        
     def post(self):
+        """
+            Handle post requests for qualification information
+        """
         request_data=request.get_json()
         try:
             self.db.addEmployeeQualification(request_data)
@@ -35,6 +48,9 @@ class Qualification(MethodView):
         
     @jwt_required(verify_type=False)   
     def put(self):
+        """
+            Handle put requests for qualification information
+        """
         try:
             ID=request.args.get('QualificationID')
             request_data=request.get_json()
@@ -50,6 +66,9 @@ class Qualification(MethodView):
         
     @jwt_required(verify_type=False)   
     def delete(self):
+        """
+            Handle delete requests for qualification information
+        """
         try:
             id=request.args.get('QualificationID')
             if id is None:

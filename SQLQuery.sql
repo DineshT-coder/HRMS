@@ -17,7 +17,6 @@ ManagerID int
 alter table Employee add foreign key(DepartmentID) references Department(DepartmentID);
 alter table Employee add foreign key(ManagerID) references Employee(EmployeeID);
 
-
 CREATE TABLE Department(
 DepartmentID int primary key not null Identity(1,1),
 DepartmentName VARCHAR(255)

@@ -5,12 +5,23 @@ import db
 from flask_jwt_extended import jwt_required
 blp_project=Blueprint('project',__name__,description="operations on project")
 @blp_project.route('/employee/project')
-class Employee(MethodView):
+class Project(MethodView):
+    """
+        The Project class is a Flask view class that handles HTTP requests related to employee information.
+    """
     def __init__(self):
+        """
+            In the __init__ method, an instance of the EmployeeInformation class from the db module is
+            created and stored in the self.db attribute
+        """
         self.db=db.Project()    
     
     @jwt_required(verify_type=False)
     def get(self):
+        """
+            Handle post requests for project information
+        """
+        
         try:
             id=request.args.get('ProjectID')
             if id is None:
@@ -27,6 +38,10 @@ class Employee(MethodView):
         
     @jwt_required(verify_type=False)      
     def post(self):
+        """
+            Handle post requests for project information
+        """
+        
         request_data=request.get_json()
         try:
             self.db.addProject(request_data)
@@ -36,6 +51,10 @@ class Employee(MethodView):
         
     @jwt_required(verify_type=False)
     def put(self):
+        """
+            Handle put requests for project information
+        """
+        
         try:
             projectID=request.args.get('ProjectID')
             request_data=request.get_json()
@@ -51,6 +70,9 @@ class Employee(MethodView):
         
     @jwt_required(verify_type=False)   
     def delete(self):
+        """
+            Handle DELETE requests for project information
+        """
         try:
             projectID=request.args.get('ProjectID')
             if id is None:

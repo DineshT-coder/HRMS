@@ -6,11 +6,21 @@ from flask_jwt_extended import jwt_required
 blp_country=Blueprint('employee country',__name__,description="operations on country")
 @blp_country.route('/employee/country')
 class Country(MethodView):
+    """
+        The Country class is a Flask view class that handles HTTP requests related to Country information.
+    """
     def __init__(self):
+        """
+            In the __init__ method, an instance of the EmployeeInformation class from the db module is
+            created and stored in the self.db attribute
+        """
         self.db=db.Country() 
            
     @jwt_required(verify_type=False)
     def get(self):
+        """
+            Handle GET requests for COUNTRY information
+        """
         try:
             id=request.args.get('country_id')
             if id is None:
@@ -28,6 +38,9 @@ class Country(MethodView):
         
     @jwt_required(verify_type=False)     
     def post(self):
+        """
+            Handle  POST requests for COUNTRY information
+        """
         request_data=request.get_json()
         try:
             self.db.addEmployeeCountry(request_data)
@@ -37,6 +50,9 @@ class Country(MethodView):
     
     @jwt_required(verify_type=False)    
     def put(self):
+        """
+            Handle PUT requests for COUNTRY information
+        """
         try:
             country_id=request.args.get('country_id')
             request_data=request.get_json()
@@ -52,6 +68,9 @@ class Country(MethodView):
         
     @jwt_required(verify_type=False)   
     def delete(self):
+        """
+            Handle DELETE requests for COUNTRY information
+        """
         try:
             country_id=request.args.get('country_id')
             if country_id is None:

@@ -6,11 +6,21 @@ from flask_jwt_extended import jwt_required
 blp_city=Blueprint('employee city',__name__,description="operations on city")
 @blp_city.route('/employee/city')
 class State(MethodView):
+    """
+        The State class is a Flask view class that handles HTTP requests related to employee information.
+    """
     def __init__(self):
+        """
+            In the __init__ method, an instance of the EmployeeInformation class from the db module is
+            created and stored in the self.db attribute
+        """
         self.db=db.City() 
            
     @jwt_required(verify_type=False)
     def get(self):
+        """
+            Handle get requests for City information
+        """
         
         try:
             id=request.args.get('city_id')
@@ -29,6 +39,10 @@ class State(MethodView):
         
     @jwt_required(verify_type=False)     
     def post(self):
+        """
+            Handle post requests for City information
+        """
+        
         request_data=request.get_json()
         try:
             self.db.addEmployeeCity(request_data)
@@ -38,6 +52,10 @@ class State(MethodView):
     
     @jwt_required(verify_type=False)    
     def put(self):
+        """
+            Handle put requests for City information
+        """
+        
         try:
             city_id=request.args.get('city_id')
             request_data=request.get_json()
@@ -53,6 +71,9 @@ class State(MethodView):
         
     @jwt_required(verify_type=False)   
     def delete(self):
+        """
+            Handle DELETE requests for City information
+        """
         try:
             city_id=request.args.get('city_id')
             if city_id is None:

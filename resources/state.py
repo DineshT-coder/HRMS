@@ -6,11 +6,21 @@ from flask_jwt_extended import jwt_required
 blp_state=Blueprint('employee state',__name__,description="operations on state")
 @blp_state.route('/employee/state')
 class State(MethodView):
+    """
+        The state class is a Flask view class that handles HTTP requests related to employee information.
+    """
     def __init__(self):
+        """
+            In the __init__ method, an instance of the EmployeeInformation class from the db module is
+            created and stored in the self.db attribute
+        """
         self.db=db.State() 
            
     @jwt_required(verify_type=False)
     def get(self):
+        """
+            Handle get requests for state information
+        """
         try:
             id=request.args.get('state_id')
             if id is None:
@@ -27,6 +37,9 @@ class State(MethodView):
         
     @jwt_required(verify_type=False)     
     def post(self):
+        """
+            Handle post requests for state information
+        """
         request_data=request.get_json()
         try:
             self.db.addEmployeeState(request_data)
@@ -36,6 +49,9 @@ class State(MethodView):
     
     @jwt_required(verify_type=False)    
     def put(self):
+        """
+            Handle put requests for state information
+        """
         try:
             state_id=request.args.get('state_id')
             request_data=request.get_json()
@@ -50,6 +66,9 @@ class State(MethodView):
         
     @jwt_required(verify_type=False)   
     def delete(self):
+        """
+            Handle delete requests for state information
+        """
         try:
             state_id=request.args.get('state_id')
             if state_id is None:
