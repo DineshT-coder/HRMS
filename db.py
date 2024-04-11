@@ -124,30 +124,9 @@ class EmployeeInformation(DataBaseConnectivity):
         else:
             return False
         
-            
-    # def deleteEmployeeRecord(self,empid):
-    #     query=f"DELETE FROM Employee WHERE EmployeeID={empid}"
-    #     self.cursor.execute(query)
-    #     if self.cursor.rowcount!=0:
-    #         self.conn.commit()
-    #         return True
-    #     else:
-    #         return False
     
     def deleteEmployeeRecord(self,empid):
         """Delete an employee record from the database."""
-        
-        # query_city=f"delete from city where not exists(select 1 from Address where city.city_id=Address.AddressID)"
-        # self.cursor.execute(query_city)
-        # self.conn.commit()
-        
-        # query_state=f"delete from State where not exists(select 1 from Address where STATE.state_id=Address.AddressID)"
-        # self.cursor.execute(query_state)
-        # self.conn.commit()
-        
-        # query_country=f"delete from Country where not exists(select 1 from Address where Country.country_id=Address.AddressID)"
-        # self.cursor.execute(query_country)
-        # self.conn.commit()
         
         query_department=f"delete from department where not exists(select 1 from employee where employee.DepartmentID=Department.DepartmentID)"
         self.cursor.execute(query_department)
