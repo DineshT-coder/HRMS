@@ -128,10 +128,6 @@ class EmployeeInformation(DataBaseConnectivity):
     def deleteEmployeeRecord(self,empid):
         """Delete an employee record from the database."""
         
-        query_department=f"delete from department where not exists(select 1 from employee where employee.DepartmentID=Department.DepartmentID)"
-        self.cursor.execute(query_department)
-        self.conn.commit()
-        
         query=f"DELETE FROM Employee WHERE EmployeeID={empid}"
         self.cursor.execute(query)
         
