@@ -11,6 +11,7 @@ from resources.user import blp_user
 from resources.city import blp_city
 from resources.country import blp_country
 from resources.state import blp_state
+from resources.manager import blp_manager
 from flask_jwt_extended import JWTManager
 import pyodbc
 import os
@@ -39,7 +40,7 @@ api.register_blueprint(blp_user)
 api.register_blueprint(blp_state)
 api.register_blueprint(blp_city)
 api.register_blueprint(blp_country)
-
+api.register_blueprint(blp_manager)
 api.register_blueprint(blp_header)
 
 app.config['DEBUG']=True
