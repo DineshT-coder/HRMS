@@ -1,5 +1,5 @@
 
-# Human Resource Manaeent System using Flask
+# Human Resource Management System using Flask
 
 This Human Resource Management System is a web application built using Flask, a lightweight Python web framework. It allows businesses to manage their employee data efficiently.
 
