@@ -1,7 +1,7 @@
 
-# Employee Management System using Flask
+# Human Resource Manaeent System using Flask
 
-This Employee Management System is a web application built using Flask, a lightweight Python web framework. It allows businesses to manage their employee data efficiently.
+This Human Resource Management System is a web application built using Flask, a lightweight Python web framework. It allows businesses to manage their employee data efficiently.
 
 # Features
 ### User Authentication: Secure user authentication system for accessing the application.
